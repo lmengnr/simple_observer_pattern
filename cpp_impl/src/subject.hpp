@@ -4,6 +4,7 @@
 
 #include <map>
 #include <unordered_map>
+#include <list>
 #include <memory>
 
 
@@ -13,7 +14,7 @@ private:
     /* data */
 
 protected:
-    std::unordered_map<uint16_t, std::shared_ptr<IObserver>> m_mapObservers;
+    std::list<std::shared_ptr<IObserver>> m_listObservers;
 
 public:
     ISubject(/* args */)
@@ -25,28 +26,35 @@ public:
 
     virtual void RegisterObserver(std::shared_ptr<IObserver> pObserver) = 0;
     virtual void UnregisterObserver(std::shared_ptr<IObserver> pObserver) = 0;
-    virtual void NotifyObservers() = 0;
+    virtual void NotifyObservers(const ActivityData& newState) = 0;
+    //TODO: Maybe keep notify observers without params and have an update state method?
 };
 
-class ActivityObserver : ISubject
+class ActivityTracker : ISubject
 {
 
 private:
 
 public:
-    ActivityObserver() {}
-    ~ActivityObserver() {}
+    ActivityTracker() {}
+    ~ActivityTracker() {}
 
     void RegisterObserver(std::shared_ptr<IObserver> pObserver) override
     {
+        m_listObservers.push_back(pObserver);
 
     }
     void UnregisterObserver(std::shared_ptr<IObserver> pObserver) override
     {
+        m_listObservers.remove(pObserver);
 
     }
-    void NotifyObservers() override
+    void NotifyObservers(const ActivityData& newState) override
     {
+        for (auto observer : m_listObservers)
+        {
+            observer->Update(newState);
+        }
 
     }
 

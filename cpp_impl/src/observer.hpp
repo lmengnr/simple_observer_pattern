@@ -21,13 +21,13 @@ private:
     /* data */
 public:
     IObserver(/* args */){};
-    IObserver(){};
+    ~IObserver(){};
 
-    virtual void Update(const ActivityData& newState);
+    virtual void Update(const ActivityData& newState) = 0;
 };
 
 
-class cObserverA : IObserver
+class cObserverA : public IObserver
 {
 private:
     /* data */
@@ -43,7 +43,7 @@ public:
 
 };
 
-class cDistObserver : IObserver
+class cDistObserver : public IObserver
 {
 private:
     ActivityData oPrevPos;
